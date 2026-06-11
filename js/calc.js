@@ -95,12 +95,13 @@
     if (p.type === 'futures' && m.distToLiqPct !== null) {
       const warnPct = num(a.liqWarnPct) ?? 15;
       const critPct = num(a.liqCritPct) ?? 7;
+      const lev = num(p.leverage) || 1;
       if (m.distToLiqPct <= 0)
-        push('liq-past', 'crit', `🚨 ${sym} ${p.side || 'long'} x${p.leverage} en ${p.exchange}: el precio ($${fmt(price)}) cruzó la liquidación ($${fmt(m.liq)}). VERIFICÁ EN EL EXCHANGE si la posición sigue viva.`);
+        push('liq-past', 'crit', `🚨 ${sym} ${p.side || 'long'} x${lev} en ${p.exchange}: el precio ($${fmt(price)}) cruzó la liquidación ($${fmt(m.liq)}). VERIFICÁ EN EL EXCHANGE si la posición sigue viva.`);
       else if (m.distToLiqPct <= critPct)
-        push('liq-crit', 'crit', `🚨 ${sym} ${p.side || 'long'} x${p.leverage} en ${p.exchange}: a ${m.distToLiqPct.toFixed(1)}% de LIQUIDACIÓN ($${fmt(m.liq)}). RECARGÁ MARGEN o cerrá la posición YA.`);
+        push('liq-crit', 'crit', `🚨 ${sym} ${p.side || 'long'} x${lev} en ${p.exchange}: a ${m.distToLiqPct.toFixed(1)}% de LIQUIDACIÓN ($${fmt(m.liq)}). RECARGÁ MARGEN o cerrá la posición YA.`);
       else if (m.distToLiqPct <= warnPct)
-        push('liq-warn', 'warn', `⚠️ ${sym} ${p.side || 'long'} x${p.leverage} en ${p.exchange}: a ${m.distToLiqPct.toFixed(1)}% de la liquidación ($${fmt(m.liq)}). Atento al margen.`);
+        push('liq-warn', 'warn', `⚠️ ${sym} ${p.side || 'long'} x${lev} en ${p.exchange}: a ${m.distToLiqPct.toFixed(1)}% de la liquidación ($${fmt(m.liq)}). Atento al margen.`);
     }
 
     if (p.type === 'loan') {
