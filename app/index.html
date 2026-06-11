@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Sentinel — Monitor de Posiciones</title>
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/icon-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+  <div class="status-dot" id="dot"></div>
+  <h1>SENTI<span>NEL</span></h1>
+  <div id="hdr-info">—</div>
+  <button id="btn-notif" title="Activar notificaciones">🔔</button>
+  <button id="btn-settings" title="Configuración">⚙</button>
+</header>
+
+<div id="ticker"></div>
+
+<div id="summary">
+  <div class="sum-box"><div class="lbl">PnL abierto</div><div class="val" id="sum-pnl">—</div></div>
+  <div class="sum-box"><div class="lbl">Posiciones</div><div class="val" id="sum-count">0</div></div>
+  <div class="sum-box"><div class="lbl">En riesgo</div><div class="val" id="sum-risk">0</div></div>
+</div>
+
+<div id="filters">
+  <span class="chip active" data-status="open">Abiertas</span>
+  <span class="chip" data-status="closed">Historial</span>
+  <select id="f-type">
+    <option value="">Tipo: todos</option>
+    <option value="futures">Futuros</option>
+    <option value="loan">Préstamo</option>
+    <option value="spot">Spot</option>
+  </select>
+  <select id="f-strategy"><option value="">Estrategia: todas</option></select>
+  <select id="f-exchange"><option value="">Exchange: todos</option></select>
+  <input id="f-search" type="search" placeholder="Buscar…">
+</div>
+
+<div id="positions"></div>
+
+<button id="fab" title="Nueva posición">+</button>
+
+<!-- ===== Modal: posición ===== -->
+<div class="modal-bg" id="modal-pos">
+  <div class="modal">
+    <h2 id="pos-title">Nueva posición</h2>
+    <form id="pos-form">
+      <input type="hidden" id="p-id">
+
+      <div class="frow">
+        <div class="field"><label>Tipo</label>
+          <select id="p-type">
+            <option value="futures">Futuros / Perpetuos</option>
+            <option value="loan">Préstamo con colateral</option>
+            <option value="spot">Spot</option>
+          </select>
+        </div>
+        <div class="field"><label>Activo (ej: BTC)</label><input id="p-asset" required autocapitalize="characters" placeholder="BTC"></div>
+      </div>
+
+      <div class="frow">
+        <div class="field"><label>Exchange</label><input id="p-exchange" placeholder="BingX / Bybit / Nexo…" list="dl-exchange"><datalist id="dl-exchange"></datalist></div>
+        <div class="field"><label>Estrategia</label><input id="p-strategy" placeholder="Plan auto 40k…" list="dl-strategy"><datalist id="dl-strategy"></datalist></div>
+      </div>
+
+      <div class="frow">
+        <div class="field"><label>Fecha de apertura</label><input id="p-opened" type="date"></div>
+        <div class="field" id="fw-side"><label>Posición</label>
+          <select id="p-side"><option value="long">Long</option><option value="short">Short</option></select>
+        </div>
+      </div>
+
+      <!-- Futuros -->
+      <div data-types="futures">
+        <div class="frow">
+          <div class="field"><label>Margen (USD)</label><input id="p-margin" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Apalancamiento (x)</label><input id="p-leverage" type="number" step="any" inputmode="decimal" placeholder="10"></div>
+        </div>
+        <div class="frow">
+          <div class="field"><label>Precio de entrada</label><input id="p-entry-f" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Precio liq. (del exchange, opcional)</label><input id="p-liq" type="number" step="any" inputmode="decimal"></div>
+        </div>
+      </div>
+
+      <!-- Préstamo -->
+      <div data-types="loan">
+        <div class="frow">
+          <div class="field"><label>Préstamo (USD)</label><input id="p-principal" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Colateral (cantidad del activo)</label><input id="p-collqty" type="number" step="any" inputmode="decimal"></div>
+        </div>
+        <div class="frow">
+          <div class="field"><label>Precio piso (opcional)</label><input id="p-floor" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Precio techo (opcional)</label><input id="p-ceil" type="number" step="any" inputmode="decimal"></div>
+        </div>
+        <div class="frow">
+          <div class="field"><label>Vencimiento</label><input id="p-due" type="date"></div>
+          <div class="field"></div>
+        </div>
+      </div>
+
+      <!-- Spot -->
+      <div data-types="spot">
+        <div class="frow">
+          <div class="field"><label>Cantidad</label><input id="p-qty-s" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Precio de entrada</label><input id="p-entry-s" type="number" step="any" inputmode="decimal"></div>
+        </div>
+      </div>
+
+      <div data-types="futures,spot">
+        <div class="frow">
+          <div class="field"><label>Stop Loss</label><input id="p-sl" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Take Profit</label><input id="p-tp" type="number" step="any" inputmode="decimal"></div>
+        </div>
+      </div>
+
+      <h3>Alertas de esta operación</h3>
+
+      <div data-types="futures">
+        <div class="frow">
+          <div class="field"><label>Aviso: distancia a liq. (%)</label><input id="a-liqwarn" type="number" step="any" inputmode="decimal" placeholder="15"></div>
+          <div class="field"><label>Crítico: distancia a liq. (%)</label><input id="a-liqcrit" type="number" step="any" inputmode="decimal" placeholder="7"></div>
+        </div>
+      </div>
+
+      <div data-types="loan">
+        <div class="frow">
+          <div class="field"><label>Aviso: LTV (%)</label><input id="a-ltvwarn" type="number" step="any" inputmode="decimal" placeholder="65"></div>
+          <div class="field"><label>Crítico: LTV (%)</label><input id="a-ltvcrit" type="number" step="any" inputmode="decimal" placeholder="78"></div>
+        </div>
+        <div class="frow">
+          <div class="field"><label>Aviso: distancia a piso/techo (%)</label><input id="a-rangedist" type="number" step="any" inputmode="decimal" placeholder="5"></div>
+          <div class="field"><label>Aviso: días antes del vto.</label><input id="a-duedays" type="number" inputmode="numeric" placeholder="7"></div>
+        </div>
+      </div>
+
+      <div class="frow">
+        <div class="field"><label>Alerta si el precio supera</label><input id="a-above" type="number" step="any" inputmode="decimal"></div>
+        <div class="field"><label>Alerta si el precio cae bajo</label><input id="a-below" type="number" step="any" inputmode="decimal"></div>
+      </div>
+
+      <div class="frow single">
+        <div class="field"><label>Observaciones</label><textarea id="p-notes" rows="2"></textarea></div>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn" id="btn-cancel">Cancelar</button>
+        <button type="submit" class="btn primary">Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ===== Modal: cerrar posición ===== -->
+<div class="modal-bg" id="modal-close">
+  <div class="modal">
+    <h2>Cerrar posición</h2>
+    <input type="hidden" id="c-id">
+    <div class="frow">
+      <div class="field"><label>Precio de cierre</label><input id="c-price" type="number" step="any" inputmode="decimal"></div>
+      <div class="field"><label>Fecha de cierre</label><input id="c-date" type="date"></div>
+    </div>
+    <div class="frow single">
+      <div class="field"><label>Notas del cierre</label><textarea id="c-notes" rows="2"></textarea></div>
+    </div>
+    <div class="btn-row">
+      <button type="button" class="btn" id="btn-close-cancel">Cancelar</button>
+      <button type="button" class="btn primary" id="btn-close-ok">Confirmar cierre</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Modal: configuración ===== -->
+<div class="modal-bg" id="modal-settings">
+  <div class="modal">
+    <h2>Configuración</h2>
+    <div class="cloud-status off" id="cloud-status">Nube: no configurada — los datos viven solo en este dispositivo</div>
+
+    <h3>Sincronización (Supabase)</h3>
+    <p class="hint">Con esto los datos se comparten entre el iPhone y la notebook, y el monitor en la nube vigila tus posiciones 24/7 aunque la app esté cerrada.</p>
+    <div class="frow single"><div class="field"><label>URL del proyecto</label><input id="s-sburl" placeholder="https://xxxx.supabase.co"></div></div>
+    <div class="frow single"><div class="field"><label>Clave pública (anon key)</label><input id="s-sbkey" placeholder="eyJ…"></div></div>
+    <div class="frow">
+      <div class="field"><label>Email</label><input id="s-email" type="email" autocomplete="username"></div>
+      <div class="field"><label>Contraseña</label><input id="s-pass" type="password" autocomplete="current-password"></div>
+    </div>
+    <div class="btn-row"><button type="button" class="btn primary" id="btn-login">Conectar nube</button></div>
+
+    <h3>Notificaciones push</h3>
+    <p class="hint">En iPhone: primero instalá la app (Safari → Compartir → "Agregar a pantalla de inicio") y abrila desde el ícono. Después tocá el botón.</p>
+    <div class="frow single"><div class="field"><label>Clave pública VAPID</label><input id="s-vapid" placeholder="B…"></div></div>
+    <div class="btn-row"><button type="button" class="btn" id="btn-push">Activar push en este dispositivo</button></div>
+
+    <h3>Respaldo por Telegram (Make)</h3>
+    <p class="hint">URL del webhook de Make que reenvía a tu Telegram. Es el canal de respaldo de las alertas (el monitor en la nube también lo usa).</p>
+    <div class="frow single"><div class="field"><label>Webhook de Make</label><input id="s-make" placeholder="https://hook.us1.make.com/…"></div></div>
+
+    <h3>Datos</h3>
+    <div class="btn-row">
+      <button type="button" class="btn" id="btn-export">Exportar JSON</button>
+      <button type="button" class="btn" id="btn-import">Importar JSON</button>
+    </div>
+    <input type="file" id="file-import" accept=".json" style="display:none">
+
+    <div class="btn-row">
+      <button type="button" class="btn" id="btn-settings-close">Cerrar</button>
+      <button type="button" class="btn primary" id="btn-settings-save">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toasts"></div>
+
+<script src="js/calc.js"></script>
+<script src="js/prices.js"></script>
+<script src="js/store.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

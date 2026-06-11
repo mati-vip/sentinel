@@ -1,0 +1,6 @@
+# Contienen secretos (VAPID privada, MONITOR_KEY) — nunca publicar
+SETUP.md
+supabase/
+
+# Local
+.claude/
