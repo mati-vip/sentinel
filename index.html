@@ -94,8 +94,18 @@
       <!-- Préstamo -->
       <div data-types="loan">
         <div class="frow">
-          <div class="field"><label>Préstamo (USD)</label><input id="p-principal" type="text" inputmode="decimal"></div>
+          <div class="field"><label>Monto original del préstamo (USD)</label><input id="p-principal" type="text" inputmode="decimal"></div>
           <div class="field"><label>Colateral (cantidad del activo)</label><input id="p-collqty" type="text" inputmode="decimal"></div>
+        </div>
+        <div class="frow">
+          <div class="field"><label>Tasa de interés (%)</label><input id="p-rate" type="text" inputmode="decimal" placeholder="12,9"></div>
+          <div class="field"><label>Período de la tasa</label>
+            <select id="p-rateper">
+              <option value="annual">Anual</option>
+              <option value="monthly">Mensual</option>
+              <option value="daily">Diaria</option>
+            </select>
+          </div>
         </div>
         <div class="frow">
           <div class="field"><label>Precio piso (opcional)</label><input id="p-floor" type="text" inputmode="decimal"></div>

@@ -77,7 +77,8 @@
     } else if (p.type === 'loan' && m) {
       out.push(c('LTV', m.ltv === null ? '—' : m.ltv.toFixed(1) + '%', m.ltv > (num(p.alerts?.ltvWarn) ?? 65) ? 'neg' : 'pos'));
       out.push(c('Colateral', money(m.collValue)));
-      out.push(c('Préstamo', money(num(p.principal))));
+      out.push(c('Deuda hoy', money(m.debt)));
+      if (m.interest !== null && m.interest >= 0.01) out.push(c('Intereses acum.', '+' + money(m.interest), 'neg'));
       if (num(p.floorPrice) !== null) out.push(c('Dist. piso', m.distToFloorPct === null ? '—' : m.distToFloorPct.toFixed(1) + '%'));
       if (m.daysToDue !== null) out.push(c('Vence en', m.daysToDue + ' días', m.daysToDue <= 7 ? 'neg' : ''));
     } else if (p.type === 'spot' && m) {
@@ -247,6 +248,8 @@
     $('p-liq').value = f.liqPrice ?? '';
     $('p-principal').value = f.principal ?? '';
     $('p-collqty').value = f.collateralQty ?? '';
+    $('p-rate').value = f.interestRate ?? '';
+    $('p-rateper').value = f.ratePeriod || 'annual';
     $('p-floor').value = f.floorPrice ?? '';
     $('p-ceil').value = f.ceilPrice ?? '';
     $('p-due').value = f.dueDate || '';
@@ -289,6 +292,8 @@
       qty: t === 'spot' ? v('p-qty-s') : (existing?.qty ?? null),
       principal: t === 'loan' ? v('p-principal') : null,
       collateralQty: t === 'loan' ? v('p-collqty') : null,
+      interestRate: t === 'loan' ? v('p-rate') : null,
+      ratePeriod: t === 'loan' ? $('p-rateper').value : null,
       floorPrice: t === 'loan' ? v('p-floor') : null,
       ceilPrice: t === 'loan' ? v('p-ceil') : null,
       dueDate: t === 'loan' ? v('p-due') : null,
