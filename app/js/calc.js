@@ -35,11 +35,27 @@
     };
   }
 
+  // Deuda actualizada: interés compuesto diario desde la fecha de apertura.
+  // La tasa se interpreta como nominal del período elegido (anual/mensual/diaria).
+  function loanDebt(p) {
+    const principal = num(p.principal);
+    if (principal === null) return null;
+    const rate = num(p.interestRate);
+    if (rate === null || rate <= 0 || !p.openedAt) return principal;
+    const days = Math.max(0, (Date.now() - new Date(p.openedAt + 'T00:00:00')) / 86400000);
+    const perDay = p.ratePeriod === 'daily' ? rate / 100
+      : p.ratePeriod === 'monthly' ? rate / 100 / 30
+      : rate / 100 / 365;
+    return principal * Math.pow(1 + perDay, days);
+  }
+
   function loanMetrics(p, price) {
     const principal = num(p.principal), collQty = num(p.collateralQty);
     if (principal === null || collQty === null || price === null) return null;
     const collValue = collQty * price;
-    const ltv = collValue > 0 ? (principal / collValue) * 100 : null;
+    const debt = loanDebt(p);
+    const interest = debt !== null ? debt - principal : null;
+    const ltv = collValue > 0 && debt !== null ? (debt / collValue) * 100 : null;
     const floor = num(p.floorPrice), ceil = num(p.ceilPrice);
     const distToFloorPct = floor !== null && price > 0 ? ((price - floor) / price) * 100 : null;
     const distToCeilPct = ceil !== null && price > 0 ? ((ceil - price) / price) * 100 : null;
@@ -47,7 +63,7 @@
     if (p.dueDate) {
       daysToDue = Math.ceil((new Date(p.dueDate + 'T23:59:59') - Date.now()) / 86400000);
     }
-    return { collValue, ltv, distToFloorPct, distToCeilPct, daysToDue, value: collValue };
+    return { collValue, debt, interest, ltv, distToFloorPct, distToCeilPct, daysToDue, value: collValue };
   }
 
   function spotMetrics(p, price) {
