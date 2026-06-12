@@ -82,24 +82,24 @@
       <!-- Futuros -->
       <div data-types="futures">
         <div class="frow">
-          <div class="field"><label>Margen (USD)</label><input id="p-margin" type="number" step="any" inputmode="decimal"></div>
-          <div class="field"><label>Apalancamiento (x)</label><input id="p-leverage" type="number" step="any" inputmode="decimal" placeholder="10"></div>
+          <div class="field"><label>Margen (USD)</label><input id="p-margin" type="text" inputmode="decimal"></div>
+          <div class="field"><label>Apalancamiento (x)</label><input id="p-leverage" type="text" inputmode="decimal" placeholder="10"></div>
         </div>
         <div class="frow">
-          <div class="field"><label>Precio de entrada</label><input id="p-entry-f" type="number" step="any" inputmode="decimal"></div>
-          <div class="field"><label>Precio liq. (del exchange, opcional)</label><input id="p-liq" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Precio de entrada</label><input id="p-entry-f" type="text" inputmode="decimal"></div>
+          <div class="field"><label>Precio liq. (del exchange, opcional)</label><input id="p-liq" type="text" inputmode="decimal"></div>
         </div>
       </div>
 
       <!-- Préstamo -->
       <div data-types="loan">
         <div class="frow">
-          <div class="field"><label>Préstamo (USD)</label><input id="p-principal" type="number" step="any" inputmode="decimal"></div>
-          <div class="field"><label>Colateral (cantidad del activo)</label><input id="p-collqty" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Préstamo (USD)</label><input id="p-principal" type="text" inputmode="decimal"></div>
+          <div class="field"><label>Colateral (cantidad del activo)</label><input id="p-collqty" type="text" inputmode="decimal"></div>
         </div>
         <div class="frow">
-          <div class="field"><label>Precio piso (opcional)</label><input id="p-floor" type="number" step="any" inputmode="decimal"></div>
-          <div class="field"><label>Precio techo (opcional)</label><input id="p-ceil" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Precio piso (opcional)</label><input id="p-floor" type="text" inputmode="decimal"></div>
+          <div class="field"><label>Precio techo (opcional)</label><input id="p-ceil" type="text" inputmode="decimal"></div>
         </div>
         <div class="frow">
           <div class="field"><label>Vencimiento</label><input id="p-due" type="date"></div>
@@ -110,15 +110,15 @@
       <!-- Spot -->
       <div data-types="spot">
         <div class="frow">
-          <div class="field"><label>Cantidad</label><input id="p-qty-s" type="number" step="any" inputmode="decimal"></div>
-          <div class="field"><label>Precio de entrada</label><input id="p-entry-s" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Cantidad</label><input id="p-qty-s" type="text" inputmode="decimal"></div>
+          <div class="field"><label>Precio de entrada</label><input id="p-entry-s" type="text" inputmode="decimal"></div>
         </div>
       </div>
 
       <div data-types="futures,spot">
         <div class="frow">
-          <div class="field"><label>Stop Loss</label><input id="p-sl" type="number" step="any" inputmode="decimal"></div>
-          <div class="field"><label>Take Profit</label><input id="p-tp" type="number" step="any" inputmode="decimal"></div>
+          <div class="field"><label>Stop Loss</label><input id="p-sl" type="text" inputmode="decimal"></div>
+          <div class="field"><label>Take Profit</label><input id="p-tp" type="text" inputmode="decimal"></div>
         </div>
       </div>
 
@@ -126,25 +126,25 @@
 
       <div data-types="futures">
         <div class="frow">
-          <div class="field"><label>Aviso: distancia a liq. (%)</label><input id="a-liqwarn" type="number" step="any" inputmode="decimal" placeholder="15"></div>
-          <div class="field"><label>Crítico: distancia a liq. (%)</label><input id="a-liqcrit" type="number" step="any" inputmode="decimal" placeholder="7"></div>
+          <div class="field"><label>Aviso: distancia a liq. (%)</label><input id="a-liqwarn" type="text" inputmode="decimal" placeholder="15"></div>
+          <div class="field"><label>Crítico: distancia a liq. (%)</label><input id="a-liqcrit" type="text" inputmode="decimal" placeholder="7"></div>
         </div>
       </div>
 
       <div data-types="loan">
         <div class="frow">
-          <div class="field"><label>Aviso: LTV (%)</label><input id="a-ltvwarn" type="number" step="any" inputmode="decimal" placeholder="65"></div>
-          <div class="field"><label>Crítico: LTV (%)</label><input id="a-ltvcrit" type="number" step="any" inputmode="decimal" placeholder="78"></div>
+          <div class="field"><label>Aviso: LTV (%)</label><input id="a-ltvwarn" type="text" inputmode="decimal" placeholder="65"></div>
+          <div class="field"><label>Crítico: LTV (%)</label><input id="a-ltvcrit" type="text" inputmode="decimal" placeholder="78"></div>
         </div>
         <div class="frow">
-          <div class="field"><label>Aviso: distancia a piso/techo (%)</label><input id="a-rangedist" type="number" step="any" inputmode="decimal" placeholder="5"></div>
+          <div class="field"><label>Aviso: distancia a piso/techo (%)</label><input id="a-rangedist" type="text" inputmode="decimal" placeholder="5"></div>
           <div class="field"><label>Aviso: días antes del vto.</label><input id="a-duedays" type="number" inputmode="numeric" placeholder="7"></div>
         </div>
       </div>
 
       <div class="frow">
-        <div class="field"><label>Alerta si el precio supera</label><input id="a-above" type="number" step="any" inputmode="decimal"></div>
-        <div class="field"><label>Alerta si el precio cae bajo</label><input id="a-below" type="number" step="any" inputmode="decimal"></div>
+        <div class="field"><label>Alerta si el precio supera</label><input id="a-above" type="text" inputmode="decimal"></div>
+        <div class="field"><label>Alerta si el precio cae bajo</label><input id="a-below" type="text" inputmode="decimal"></div>
       </div>
 
       <div class="frow single">
@@ -165,7 +165,7 @@
     <h2>Cerrar posición</h2>
     <input type="hidden" id="c-id">
     <div class="frow">
-      <div class="field"><label>Precio de cierre</label><input id="c-price" type="number" step="any" inputmode="decimal"></div>
+      <div class="field"><label>Precio de cierre</label><input id="c-price" type="text" inputmode="decimal"></div>
       <div class="field"><label>Fecha de cierre</label><input id="c-date" type="date"></div>
     </div>
     <div class="frow single">
