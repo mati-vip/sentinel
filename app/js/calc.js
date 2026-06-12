@@ -7,7 +7,7 @@
   const MMR_DEFAULT = 0.005; // margen de mantenimiento estimado si el exchange no da precio de liq.
 
   function num(v) {
-    const n = parseFloat(v);
+    const n = parseFloat(String(v).replace(',', '.'));
     return isFinite(n) ? n : null;
   }
 
